@@ -549,6 +549,15 @@ my @tests = (
     }
 }
 
+# clone test
+{
+    my $test_name = $tests[0]->{name};
+    my $t = $schema->resultset('Test')->search({ branch_id => $branch_id, name => $test_name })->single;
+    ok( defined $t, "Found test with name '$test_name' in DB." );
+    my $test_id = $t->id;
+    $mech->post_ok("/api/test/clone", {test_id => $test_id});
+}
+
 # delete jobs
 $schema->resultset('Job')->delete;
 
