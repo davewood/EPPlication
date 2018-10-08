@@ -23,28 +23,25 @@ a Testing Framework developed and used by [nic.at](https://www.nic.at), the aust
 [![EPPlication Video](https://i.vimeocdn.com/video/714314727.jpg?mw=1000&mh=560)](https://vimeo.com/280733237)
 
 
-## Installation (docker)
-
-    docker-compose build
+## Installation
+Pull docker image from hub.docker.com and run it
     docker-compose up
-### wait for the containers to start, then initialize the DB
-    docker exec -u epplication epplication_app carton exec script/database.pl --cmd install
-    docker exec -u epplication epplication_app carton exec script/database.pl --cmd init --create-default-branch --create-default-roles --create-default-tags
-    docker exec -u epplication epplication_app carton exec script/database.pl --cmd adduser --username admin --password admin123 --add-all-roles
-    docker exec -u root epplication_app /etc/init.d/epplication_taskrunner restart
-    docker exec -u epplication epplication_app ssh-keygen -b 2048 -t rsa -f /home/epplication/EPPlication/ssh_keys/id_rsa -q -N ""
-    docker exec -u epplication epplication_app mkdir -m 700 /home/epplication/.ssh
-    docker exec -u epplication epplication_app bash -c "cat /home/epplication/EPPlication/ssh_keys/id_rsa.pub >> /home/epplication/.ssh/authorized_keys"
 
-### webinterface
+Build docker image and run it
+    docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+webinterface
     http://localhost:8080
     username: admin
     password: admin123
 
-## run development testsuite
+## Run dev testsuite
+Setup test database and run testserver
     docker exec epplication_db dropdb -U epplication epplication_testing
     docker exec epplication_db createdb -U epplication --owner epplication epplication_testing
     docker exec -u epplication epplication_app bash -c 'CATALYST_CONFIG_LOCAL_SUFFIX=testing CATALYST_DEBUG=1 carton exec plackup -Ilib epplication.psgi --port 3000'
+
+Run dev testsuite
     docker exec -u epplication epplication_app bash -c 'EPPLICATION_DO_INIT_DB=1 EPPLICATION_TESTSSH=1 EPPLICATION_TESTSSH_USER=epplication EPPLICATION_HOST=localhost EPPLICATION_PORT=3000 carton exec prove -lvr t'
 
 ## Copyright & License

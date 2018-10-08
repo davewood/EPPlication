@@ -11,7 +11,7 @@ services:
             - db_data:/var/lib/postgresql/data
     app:
         container_name: epplication_app
-        build: .
+        image: davewood/epplication:latest
         volumes:
             - app_data_job_exports:/home/epplication/EPPlication/root/job_exports
             - app_data_ssh_keys:/home/epplication/EPPlication/ssh_keys
